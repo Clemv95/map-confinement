@@ -1,8 +1,4 @@
 
-$("#nav-placeholder").load("navfoot/nav.php", function (){
-  $('#navbarDropdown').addClass('active');
-});
-
   //$("#foot-placeholder").load("navfoot/foot.php");
   
 
@@ -22,6 +18,7 @@ $("#nav-placeholder").load("navfoot/nav.php", function (){
     markers.clearLayers();
     myFeatureGroup.clearLayers();
     var adresse = document.getElementById("recherche").value;
+    document.getElementById('js-address').innerHTML = adresse;
     console.log(adresse);
     if(adresse != ""){
      await $.ajax({
@@ -51,7 +48,7 @@ $("#nav-placeholder").load("navfoot/nav.php", function (){
             markers.addLayer(marker);
             map.addLayer(markers);
             L.circle([y_coord,x_coord], 1000).addTo(myFeatureGroup);
-            map.setView([y_coord,x_coord], 15);
+            map.setView([y_coord,x_coord], 14);
 
           }
 
@@ -61,29 +58,3 @@ $("#nav-placeholder").load("navfoot/nav.php", function (){
         }
 
 
-
-
-
-
-        function stringToGeoPoints( geo ) {
-         var linesPin = geo.split(",");
-
-         var linesLat = new Array();
-         var linesLng = new Array();
-
-         for(i=0; i < linesPin.length; i++) {
-          if(i % 2) {
-           linesLat.push(linesPin[i]);
-         }else{
-           linesLng.push(linesPin[i]);
-         }
-       }
-
-       var latLngLine = new Array();
-
-       for(i=0; i<linesLng.length;i++) {
-        latLngLine.push( L.latLng( linesLat[i], linesLng[i]));
-      }
-
-      return latLngLine;
-    }

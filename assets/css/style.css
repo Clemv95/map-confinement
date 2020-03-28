@@ -1,0 +1,141 @@
+@import url(https://fonts.googleapis.com/css?family=Khula);
+*:focus, *:active {
+  outline: 0 !important;
+}
+
+::selection {
+  background: #AAA;
+  color: white;
+}
+
+body {
+  background-size: cover 100%;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+}
+
+.map-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  width: 400px;
+  position: relative;
+  margin: 40px auto 20px;
+}
+@media (min-width: 750px) {
+  .map-card {
+    width: 600px;
+  }
+}
+
+.map-card #map {
+  transition: all 300ms;
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+  height: 200px;
+}
+@media (min-width: 750px) {
+  .map-card #map {
+    height: 300px;
+  }
+}
+
+.map-card .map-card__info {
+  padding: 20px 20px 15px;
+}
+.map-card .map-card__info #js-address {
+  border-bottom: 1px solid #CCC;
+  color: #5D5D5D;
+  font-family: 'Khula', sans-serif;
+  text-transform: uppercase;
+  font-size: 16px;
+  text-align: center;
+  padding-bottom: 7px;
+  margin: 0 0 10px;
+}
+.map-card .map-card__info input {
+  border: 1px solid #CCC;
+  color: #999;
+  width: 96%;
+  margin: 5px 0 15px;
+  padding: 5px 10px;
+}
+.map-card .map-card__info button {
+  transition: all 300ms;
+  -webkit-appearance: none;
+  background-color: #6fd2fc;
+  border: none;
+  border-bottom: 1px solid #4da6d1;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 14px;
+  width: 50px;
+  height: 50px;
+  display: block;
+  margin: 0 auto;
+}
+.map-card .map-card__info button:active {
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.4);
+  border-bottom-color: transparent;
+}
+@media (min-width: 750px) {
+  .map-card .map-card__info button {
+    position: absolute;
+    right: -25px;
+    bottom: -25px;
+  }
+}
+
+.map-card .info-panel {
+  transition: all 300ms;
+  background-color: #5bec99;
+  border-radius: 10px;
+  color: white;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: center;
+  opacity: 0;
+  position: absolute;
+  bottom: -80px;
+  left: 20px;
+  padding: 20px;
+}
+@media (min-width: 750px) {
+  .map-card .info-panel {
+    font-size: 14px;
+    line-height: 14px;
+  }
+}
+.map-card .info-panel:before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 12.5px 15px 12.5px;
+  border-color: transparent transparent #5bec99 transparent;
+  position: absolute;
+  left: 20px;
+  top: -15px;
+}
+.map-card .info-panel.active {
+  opacity: 1;
+  bottom: 3px;
+}
+@media (min-width: 750px) {
+  .map-card .info-panel.active {
+    bottom: -50px;
+  }
+}
+.map-card .info-panel p {
+  margin: 0;
+}
+
+.gmnoscreen,
+.gm-style-mtc,
+.gm-style-cc {
+  display: none;
+}
