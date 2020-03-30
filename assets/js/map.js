@@ -1,62 +1,79 @@
+//Création des différents layers, afin de changer le mode d'affichage : Street, Relief, Satellite
+var layers = {
+    Streets: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
+    Reliefs: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
+    Satellite: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
+};
 
-  //$("#foot-placeholder").load("navfoot/foot.php");
-  
+//Initialision de la map, au milieu de la france 
+var map = L.map('map', { layers: [layers.Streets] }).setView([48.866667, 2.3], 6);
 
-  var tiles = L.tileLayer( 'https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw', {
-   maxZoom: 18,
-   attribution: 'Map data &copy; <a href="http://openstreetmap.org/"> OpenStreetMap </a> contributors, ' +
-   '<a href="http://creativecommons.org/"> CC-BY-SA </a>, ' +
-   'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-   id: 'examples.map-i875mjb7'
- })
+//Création du bouton pour changer de layer
+L.control.layers(null, layers, { position: 'bottomright' }).addTo(map);
 
-  var map = L.map('map', {layers: [tiles]}).setView([48.866667, 2.3], 6);
-  var markers = L.markerClusterGroup();
-  var myFeatureGroup = L.featureGroup().addTo(map);
 
-  
-  
-  async function rayon() {
-    markers.clearLayers();
+//Création du groupe pour les cercles de non confinement et des markers
+var myFeatureGroup = L.featureGroup().addTo(map);
+
+//Affichage du niveau de zoom en haut à droite
+map.zoomControl.setPosition('bottomright');
+
+//Ajout de la zone de recherche, en l'affichant toujours avec le .show
+var searchbox = L.control.searchbox({
+    position: 'topleft',
+    expand: 'right',
+}).addTo(map);
+searchbox.show()
+
+
+//Fonction qui va s'éxécuter quand la touche entrée sera préssée dans la barre de recherche
+searchbox.onInput("keyup", function(e) {
+    if (e.keyCode == 13) {
+        rayon();
+    }
+});
+
+//Fonction afin d'afficher le rayon autour de l'adresse recherchée 
+async function rayon() {
+    //On supprime les marqueurs et cercles déja existants 
     myFeatureGroup.clearLayers();
-    var adresse = document.getElementById("recherche").value;
-    document.getElementById('js-address').innerHTML = adresse;
-    console.log(adresse);
-    if(adresse != ""){
-     await $.ajax({
-              url: "https://nominatim.openstreetmap.org/search", // URL de Nominatim
-              type: 'get', // Requête de type GET
-              data: "q="+adresse+"&format=json&addressdetails=1&limit=1&polygon_svg=1" // Données envoyées (q -> adresse complète, format -> format attendu pour la réponse, limit -> nombre de réponses attendu, polygon_svg -> fournit les données de polygone de la réponse en svg)
-            }).done(await function (response) {
-              if(response != ''){
-                y_coord = response[0]['lat'];
-                x_coord = response[0]['lon'];
-              } 
-              else if(response== ''){
-                y_coord = null;
-                x_coord = null;
 
-              }
-              
-            }).fail(function (error) {
-            });      
-          }
+    //On récupère la recherche
+    var adresse = searchbox.getValue();
 
-          if ((y_coord==null) && (x_coord==null) ){
-            console.log("test");
-          }
-          else {
-            var marker = L.marker([y_coord,x_coord]); 
-            markers.addLayer(marker);
-            map.addLayer(markers);
-            L.circle([y_coord,x_coord], 1000).addTo(myFeatureGroup);
-            map.setView([y_coord,x_coord], 14);
+    //On utilise l'api nominatim afin de récupérer les coordonnées via l'adresse (Attention fonction asynchrone, donc bien utiliser async et await)
+    if (adresse != "") {
+        await $.ajax({
+            url: "https://nominatim.openstreetmap.org/search",
+            type: 'get',
+            data: "q=" + adresse + "&format=json&addressdetails=1&limit=1&polygon_svg=1"
+        }).done(await
+            function(response) {
+                if (response != '') {
+                    y_coord = response[0]['lat'];
+                    x_coord = response[0]['lon'];
+                } else if (response == '') {
+                    y_coord = null;
+                    x_coord = null;
 
-          }
+                }
 
+            }).fail(function(error) {});
+    }
 
-          
-          
-        }
+    if ((y_coord == null) && (x_coord == null)) {
+        console.log("test");
+    } else {
+
+        console.log([y_coord, x_coord]);
+        //On affiche le marker sur la map ainsi que le cercle autour de l'adresse recherchée 
+        var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
+        L.circle([y_coord, x_coord], 1000).addTo(myFeatureGroup);
+        map.setView([y_coord, x_coord], 14);
+
+    }
 
 
+
+
+}

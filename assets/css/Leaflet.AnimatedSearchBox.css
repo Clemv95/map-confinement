@@ -1,0 +1,77 @@
+.leaflet-searchbox-container {
+    display: flex;
+    justify-content: right;
+    height: 40px;
+    border-top-left-radius: 20px 50%;
+    border-bottom-left-radius: 20px 50%;
+    border-top-right-radius: 20px 50%;
+    border-bottom-right-radius: 20px 50%;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox,
+.leaflet-searchbox-container .leaflet-searchbox-button {
+    background-color: white;    
+    border: 1px rgb(0, 0, 0, 0.3) solid;
+    outline: none;
+    transition-duration: 0.2s;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox {
+    width: 300px;
+    font-size: 17px;
+    transition-delay: 0.2s;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-left {
+    border-right: none;
+    padding: 0px 0px 0px 15px;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-right {
+    border-top-right-radius: 20px 50%;
+    border-bottom-right-radius: 20px 50%;
+    border-left: none;
+    padding: 0px 15px 0px 0px;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-button {
+    width: 40px;
+    transition-delay: 0s;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-button:hover {
+    cursor: pointer;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-button-right {
+    border-top-right-radius: 20px 50%;
+    border-bottom-right-radius: 20px 50%;
+    border-left: none;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-button-left {
+    border-top-left-radius: 20px 50%;
+    border-bottom-left-radius: 20px 50%;
+    border-right: none;
+}
+
+.leaflet-searchbox-container .leaflet-searchbox-button i {
+    font-size: 130%;
+}
+
+.collapsed>.leaflet-searchbox {
+    width: 0px !important;
+    padding: 0px;
+    transition-delay: 0s;
+}
+
+.collapsed>.leaflet-searchbox {
+    border-left: none;
+    border-right: none;
+}
+
+.collapsed>.leaflet-searchbox-button {
+    border-radius: 50%;
+    transition-delay: 0.2s;
+    border: 1px rgb(0, 0, 0, 0.3) solid;
+}
