@@ -13,6 +13,8 @@
   var map = L.map('map', {layers: [tiles]}).setView([48.866667, 2.3], 6);
   var markers = L.markerClusterGroup();
   var myFeatureGroup = L.featureGroup().addTo(map);
+
+  
   
   async function rayon() {
     markers.clearLayers();

@@ -19,13 +19,13 @@
 
 <div class="container">
   <h1> Rayon de confinement</h1>
-  <div class="map-card">      
-    <div id="map" style="width: auto; height: 500px" ></div>
+  <div class="map-card">
+    <div id="map" style="width: auto; height: 500px"></div>
     <div class="map-card__info">
-      <p id='js-address'> </p>  
-      <input type="text" value="" class="map-input" id="recherche" placeholder="Entrer une adresse"/>
+      <p id='js-address'> </p>
+      <input type="text" value="" class="map-input" id="recherche" placeholder="Entrer une adresse" />
       <button type="button" class="btn" id="btn" onclick="rayon()"> Go</button>
-    </div>   
+    </div>
 
   </div>
 </div>
@@ -47,7 +47,6 @@
       document.getElementById("btn").click();
     }
   });
-
 </script>
 
 
@@ -56,8 +55,8 @@
     display: none;
     visibility: hidden;
   }
-  .ap-dropdown-menu{
+
+  .ap-dropdown-menu {
     width: 96%;
   }
 </style>
-
