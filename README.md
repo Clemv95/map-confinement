@@ -10,7 +10,7 @@ Ces instructions vont vous aider à installer le projet et le configurer afin de
 Ce qu'il va vous falloir afin de configurer et tester le projet 
 
 ```bash
-PHP 7 + 
+NodeJS
 ```
 
 ## Installation 
@@ -27,10 +27,16 @@ var layers = {
     Satellite: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/{z}/{x}/{y}?access_token=XXX'),
 };
 ```
-Il suffit d'ouvrir un serveur PHP en local, ou utiliser WAMP, XAMP etc : 
+Il suffit d'ouvrir un terminal : 
 
 ```bash
-php -S localhost:8000
+npm install 
+```
+
+et pour lancer :
+
+```bash
+npm start
 ```
 
 ## Utilisation 

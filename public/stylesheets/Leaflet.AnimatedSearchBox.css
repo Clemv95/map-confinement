@@ -10,14 +10,14 @@
 
 .leaflet-searchbox-container .leaflet-searchbox,
 .leaflet-searchbox-container .leaflet-searchbox-button {
-    background-color: white;    
+    background-color: white;
     border: 1px rgb(0, 0, 0, 0.3) solid;
     outline: none;
     transition-duration: 0.2s;
 }
 
 .leaflet-searchbox-container .leaflet-searchbox {
-    width: 300px;
+    width: 100%;
     font-size: 17px;
     transition-delay: 0.2s;
 }
