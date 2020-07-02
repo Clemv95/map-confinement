@@ -3,7 +3,12 @@ var layers = {
     Streets: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
     Reliefs: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
     Satellite: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
+    Pirate: L.tileLayer('https://api.mapbox.com/styles/v1/tempgeocent/cj2qe6qid003a2rmrquvqgbcx/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGVtcGdlb2NlbnQiLCJhIjoiY2l1YTNmenEyMDAwdDJ6cWZxbG55Yjg4OSJ9.QRTz4Pi3096MtXKc_QgpWQ'),
+    Blueprint: L.tileLayer('https://api.mapbox.com/styles/v1/frisy/ckc4z1bew16p71inxkiecew0a/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
+    Decimal: L.tileLayer('https://api.mapbox.com/styles/v1/frisy/ckc4yfrxp167z1ipj73qiby26/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZnJpc3kiLCJhIjoiY2s0N242dWR6MHVkNDNvanQyMnhlNDltNyJ9.LLrTAgXYW8ep6TSUDJCdXw'),
 };
+
+
 
 //Initialision de la map, au milieu de la france 
 var map = L.map('map', { layers: [layers.Streets] }).setView([48.866667, 2.3], 6);
