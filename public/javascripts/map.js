@@ -12,8 +12,6 @@ var map = L.map('map', { layers: [layers.Streets] }).setView([48.866667, 2.3], 6
 L.control.layers(null, layers, { position: 'bottomright' }).addTo(map);
 
 
-
-
 //Création du groupe pour les cercles de non confinement et des markers
 var myFeatureGroup = L.featureGroup().addTo(map);
 
@@ -36,35 +34,98 @@ searchbox.onInput("keyup", function (e) {
 });
 
 
-//Legende
-
-function getRadius(r) {
-    return r > 100 ? 12 :
-        r > 50 ? 9 :
-            r > 20 ? 6 :
-                r > 10 ? 4 :
-                    0;
+// Example function to style the isoline polygons when they are returned from the API call
+function styleIsolines(feature) {
+    // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
+    if (feature.properties.Range == 5){
+        colorr = "red";
+    }else if (feature.properties.Range == 10){
+        colorr = "blue"
+    }else if (feature.properties.Range == 15){
+        colorr = "green"
+    }else if (feature.properties.Range == 20){
+        colorr = "yellow"
+    }else if (feature.properties.Range == 25){
+        colorr = "purple"
+    }else if (feature.properties.Range == 30){
+        colorr = "brown"
+    }
+    return {
+        color: colorr,
+        opacity: 0.5,
+        fillOpacity: 0.2
+    };
 }
-var legend = L.control({ position: 'bottomleft' });
-        legend.onAdd = function (map) {
 
-            var div = L.DomUtil.create('div', 'info legend');
-            grades = [15, 40, 80],
-                color = ["#c4141a", "#1738bd", '#1f9114'],
+// Example function to style the isoline polygons when the user hovers over them
+function highlightIsolines(e) {
+    // NOTE: as shown in the examples on the Leaflet website, e.target = the layer the user is interacting with
+    var layer = e.target;
 
-                labels = ['<strong>Distance parcourue en temps</strong>'],
-                categories = ['5 min ', '10 min', '15 min'];
+    layer.setStyle({
+        fillColor: '#ffea00',
+        dashArray: '1,13',
+        weight: 4,
+        fillOpacity: '0.5',
+        opacity: '1'
+    });
+}
 
-            for (var i = 0; i < grades.length; i++) {
-                var grade = grades[i];//*0.5;
-                labels.push(
-                    '<i class="circlepadding" style="width: ' + Math.max(8, (7 - 2.2 * getRadius(grade))) + 'px;"></i> <i style="background: ' + color[i]+'; width: ' + getRadius(grade) * 2 + 'px; height: ' + getRadius(grade) * 2 + 'px; border-radius: 50%; margin-top: ' + Math.max(0, (9 - getRadius(grade))) + 'px;"></i><i class="circlepadding" style="width: ' + Math.max(2, (25 - 2 * getRadius(grade))) + 'px;"></i> ' + categories[i]);
-            }
-            div.innerHTML = labels.join('<br>');
-            return div;
-        };
-        legend.addTo(map);
+// Example function to reset the style of the isoline polygons when the user stops hovering over them
+function resetIsolines(e) {
+    // NOTE: as shown in the examples on the Leaflet website, e.target = the layer the user is interacting with
+    var layer = e.target;
 
+    reachabilityControl.isolinesGroup.resetStyle(layer);
+}
+
+// Example function to display information about an isoline in a popup when the user clicks on it
+function clickIsolines(e) {
+    // NOTE: as shown in the examples on the Leaflet website, e.target = the layer the user is interacting with
+    var layer = e.target;
+    var props = layer.feature.properties;
+    var popupContent = 'Mode de transport: ' + props['Travel mode'] + '<br />Distance: 0 - ' + props['Range'] + ' ' + props['Range units'] + '<br />Taille de la zone : ' + props['Area'] + ' ' + props['Area units'] + '<br />Population: ' + props['Population'];
+    if (props.hasOwnProperty('Reach factor')) popupContent += '<br />Facteur de déplacement: ' + props['Reach factor'];
+    layer.bindPopup(popupContent).openPopup();
+}
+
+// Example function to create a custom marker at the origin of the isoline groups
+function isolinesOrigin(latLng, travelMode, rangeType) {
+    return L.circleMarker(latLng, { radius: 4, weight: 2, color: '#0073d4', fillColor: '#fff', fillOpacity: 1 });
+}
+
+
+
+//Init Reachability 
+var reachabilityControl = L.control.reachability({
+    // add settings here
+    apiKey: '5b3ce3597851110001cf62488afbc44c2f36436d8e24253c8f2363f5',
+    styleFn: styleIsolines,
+    mouseOverFn: highlightIsolines,
+    mouseOutFn: resetIsolines,
+    clickFn: clickIsolines,
+    markerFn: isolinesOrigin,
+    expandButtonContent: '',
+    expandButtonStyleClass: 'reachability-control-expand-button fa fa-bullseye',
+    collapseButtonContent: '',
+    collapseButtonStyleClass: 'reachability-control-collapse-button fa fa-caret-up',
+    drawButtonContent: '',
+    drawButtonStyleClass: 'fa fa-pencil',
+    deleteButtonContent: '',
+    deleteButtonStyleClass: 'fa fa-trash',
+    distanceButtonContent: '',
+    distanceButtonStyleClass: 'fa fa-road',
+    timeButtonContent: '',
+    timeButtonStyleClass: 'fa fa-clock-o',
+    travelModeButton1Content: '',
+    travelModeButton1StyleClass: 'fa fa-car',
+    travelModeButton2Content: '',
+    travelModeButton2StyleClass: 'fa fa-bicycle',
+    travelModeButton3Content: '',
+    travelModeButton3StyleClass: 'fa fa-male',
+    travelModeButton4Content: '',
+    travelModeButton4StyleClass: 'fa fa-wheelchair-alt'
+}).addTo(map);
 
 //Fonction afin d'afficher le rayon autour de l'adresse recherchée 
 async function rayon() {
@@ -101,10 +162,6 @@ async function rayon() {
 
         //On affiche le marker sur la map ainsi que le cercle autour de l'adresse recherchée 
         var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
-        L.circle([y_coord, x_coord], 400, { color: 'red' }).addTo(myFeatureGroup);
-        L.circle([y_coord, x_coord], 800, { color: 'blue' }).addTo(myFeatureGroup);
-        L.circle([y_coord, x_coord], 1200, { color: 'green' }).addTo(myFeatureGroup);
-
         map.setView([y_coord, x_coord], 14);
 
     }
