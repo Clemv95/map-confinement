@@ -34,7 +34,7 @@ searchbox.show()
 //Fonction qui va s'éxécuter quand la touche entrée sera préssée dans la barre de recherche
 searchbox.onInput("keyup", function (e) {
     if (e.keyCode == 13) {
-        rayon();
+        fleuriste();
     }
 });
 
@@ -42,17 +42,17 @@ searchbox.onInput("keyup", function (e) {
 // Example function to style the isoline polygons when they are returned from the API call
 function styleIsolines(feature) {
     // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
-    if (feature.properties.Range == 5){
+    if (feature.properties.Range == 5) {
         colorr = "red";
-    }else if (feature.properties.Range == 10){
+    } else if (feature.properties.Range == 10) {
         colorr = "blue"
-    }else if (feature.properties.Range == 15){
+    } else if (feature.properties.Range == 15) {
         colorr = "green"
-    }else if (feature.properties.Range == 20){
+    } else if (feature.properties.Range == 20) {
         colorr = "yellow"
-    }else if (feature.properties.Range == 25){
+    } else if (feature.properties.Range == 25) {
         colorr = "purple"
-    }else if (feature.properties.Range == 30){
+    } else if (feature.properties.Range == 30) {
         colorr = "brown"
     }
     return {
@@ -66,7 +66,6 @@ function styleIsolines(feature) {
 function highlightIsolines(e) {
     // NOTE: as shown in the examples on the Leaflet website, e.target = the layer the user is interacting with
     var layer = e.target;
-
     layer.setStyle({
         fillColor: '#ffea00',
         dashArray: '1,13',
@@ -132,47 +131,78 @@ var reachabilityControl = L.control.reachability({
     travelModeButton4StyleClass: 'fa fa-wheelchair-alt'
 }).addTo(map);
 
+
 //Fonction afin d'afficher le rayon autour de l'adresse recherchée 
-async function rayon() {
+async function fleuriste() {
+
     //On supprime les marqueurs et cercles déja existants 
     //myFeatureGroup.clearLayers();
 
-    //On récupère la recherche
-    var adresse = searchbox.getValue();
+    await $.ajax({
+        url: "https://geo.api.gouv.fr/communes",
+        type: 'get',
+    }).done(await
+        function (response) {
+            liste_communes = response;
+        }
+    )
 
+    var adresses = searchbox.getValue().split(" ");
+    //var adresses = ["Fleuriste Ermont", "Fleuriste Taverny", "Fleuriste Conflans-Sainte-Honorine", "Fleuriste Enghien-les-Bains"]
+    //var adresses = ["Florist Ermont 95120", "Florist Enghien-Les-Bains 95880", "Florist Conflans-Sainte-Honorine 78700"];
+
+    for (let i = 0; i < adresses.length; i++) {
+        adresse = "Florist " + adresses[i] + " " + liste_communes.find(element => element.nom.toLowerCase() == adresses[i].trim().toLowerCase()).codesPostaux[0];
+        if (adresse != "") {
+            await $.ajax({
+                url: "https://nominatim.openstreetmap.org/search",
+                type: 'get',
+                data: "q=" + adresse + "&format=json&addressdetails=1&polygon_svg=1"
+            }).done(await
+                function (response) {
+                    if (response != '') {
+                        data = JSON.parse(JSON.stringify(response));
+
+                    } else if (response == '') {
+                        y_coord = null;
+                        x_coord = null;
+
+                    }
+
+                }).fail(function (error) { });
+        }
+
+        data.forEach(element => {
+            y_coord = element.lat;
+            x_coord = element.lon;
+            var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
+            if (element.address.shop == undefined) {
+                marker.bindPopup("<center><b>Adresse</b><br>" + element.address.road + " " + element.address.town);
+            } else {
+                marker.bindPopup("<center><b>Adresse</b><br>" + element.address.shop + " " + element.address.road + " " + element.address.town);
+            }
+            latlng = new L.LatLng(y_coord, x_coord);
+            reachabilityControl._showInterval.checked = true;
+            reachabilityControl._rangeTimeList.selectedIndex = 2;
+            reachabilityControl._toggleTravelMode('foot-walking'); // foot-walking ou driving-car
+            reachabilityControl._callApi(latlng);
+
+
+            //map.setView([y_coord, x_coord], 14); 
+
+
+        });
+
+    }
     //On utilise l'api nominatim afin de récupérer les coordonnées via l'adresse (Attention fonction asynchrone, donc bien utiliser async et await)
-    if (adresse != "") {
-        await $.ajax({
-            url: "https://api-adresse.data.gouv.fr/search/",
-            type: 'get',
-            data: "q=" + adresse + "&limit=1"
-        }).done(await
-            function (response) {
-                if (response != '') {
-                    data = JSON.parse(JSON.stringify(response));
-                    y_coord = data.features[0].geometry.coordinates[1];
-                    x_coord = data.features[0].geometry.coordinates[0];
-                } else if (response == '') {
-                    y_coord = null;
-                    x_coord = null;
 
-                }
 
-            }).fail(function (error) { });
-    }
-
-    if ((y_coord == null) && (x_coord == null)) {
-        console.log("test");
-    } else {
-
-        //On affiche le marker sur la map ainsi que le cercle autour de l'adresse recherchée 
-        var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
-        map.setView([y_coord, x_coord], 14);
-
-    }
+};
 
 
 
 
-}
+
+
+
 
