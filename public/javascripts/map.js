@@ -147,53 +147,46 @@ async function fleuriste() {
         }
     )
 
-    var adresses = searchbox.getValue().split(" ");
-    //var adresses = ["Fleuriste Ermont", "Fleuriste Taverny", "Fleuriste Conflans-Sainte-Honorine", "Fleuriste Enghien-les-Bains"]
-    //var adresses = ["Florist Ermont 95120", "Florist Enghien-Les-Bains 95880", "Florist Conflans-Sainte-Honorine 78700"];
-
-    for (let i = 0; i < adresses.length; i++) {
-        adresse = "Florist " + adresses[i] + " " + liste_communes.find(element => element.nom.toLowerCase() == adresses[i].trim().toLowerCase()).codesPostaux[0];
-        if (adresse != "") {
-            await $.ajax({
-                url: "https://nominatim.openstreetmap.org/search",
-                type: 'get',
-                data: "q=" + adresse + "&format=json&addressdetails=1&polygon_svg=1"
-            }).done(await
-                function (response) {
-                    if (response != '') {
-                        data = JSON.parse(JSON.stringify(response));
-
-                    } else if (response == '') {
-                        y_coord = null;
-                        x_coord = null;
-
-                    }
-
-                }).fail(function (error) { });
-        }
-
-        data.forEach(element => {
-            y_coord = element.lat;
-            x_coord = element.lon;
-            var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
-            if (element.address.shop == undefined) {
-                marker.bindPopup("<center><b>Adresse</b><br>" + element.address.road + " " + element.address.town);
-            } else {
-                marker.bindPopup("<center><b>Adresse</b><br>" + element.address.shop + " " + element.address.road + " " + element.address.town);
-            }
-            latlng = new L.LatLng(y_coord, x_coord);
-            reachabilityControl._showInterval.checked = true;
-            reachabilityControl._rangeTimeList.selectedIndex = 2;
-            reachabilityControl._toggleTravelMode('foot-walking'); // foot-walking ou driving-car
-            reachabilityControl._callApi(latlng);
+    var adresse = searchbox.getValue();
 
 
-            //map.setView([y_coord, x_coord], 14); 
+    if (adresse != "") {
+        await $.ajax({
+            url: "https://nominatim.openstreetmap.org/search",
+            type: 'get',
+            data: "q=" + adresse + "&format=json&addressdetails=1&polygon_svg=1&limit=1"
+        }).done(await
+            function (response) {
+                if (response != '') {
+                    data = JSON.parse(JSON.stringify(response));
 
+                } else if (response == '') {
+                    y_coord = null;
+                    x_coord = null;
 
-        });
+                }
 
+            }).fail(function (error) { });
     }
+
+    data.forEach(element => {
+        y_coord = element.lat;
+        x_coord = element.lon;
+        var marker = L.marker([y_coord, x_coord]).addTo(myFeatureGroup);
+        marker.bindPopup("<center><b>Adresse</b><br>" + adresse);
+      
+    
+        latlng = new L.LatLng(y_coord, x_coord);
+        reachabilityControl._showInterval.checked = true;
+        reachabilityControl._rangeTimeList.selectedIndex = 2;
+        reachabilityControl._toggleTravelMode('foot-walking'); // foot-walking ou driving-car
+        reachabilityControl._callApi(latlng);
+
+
+        //map.setView([y_coord, x_coord], 14); 
+
+
+    });
     //On utilise l'api nominatim afin de récupérer les coordonnées via l'adresse (Attention fonction asynchrone, donc bien utiliser async et await)
 
 
